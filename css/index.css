@@ -1,0 +1,31 @@
+#EditboxExcelData {
+    resize: none;
+    font-size: 20px;
+    width: 500px;
+    height: 300px;
+}
+
+#EditboxJsonData {
+    resize: none;
+    font-size: 20px;
+    width: 500px;
+    height: 300px;
+}
+
+#CheckboxToAllStr {
+    width: 30px;
+    height: 30px;
+}
+
+#div1 {
+    
+}
+
+#div2 {
+   
+}
+
+.btn1{
+    width: 100px;
+    height: 30px;
+}
