@@ -1,161 +1,164 @@
 
-let isDebug = true;
+// 转为二维数组
+function btnStartToArr() {
+    let d = excelToData();
 
-if (!isDebug) {
-    setInterval(() => { debugger }, 100);
+    let arr = dataToArr(d.datas, d.keyCount);
+    document.getElementById("EditboxJsonData").value = JSON.stringify(arr);
 }
 
-function setToAndCopyData() {
-    setExcelToJson();
-    copyJsonData();
+// 转为json数据
+function btnStartToJson() {
+    let d = excelToData();
+
+    let arr = dataToArr(d.datas, d.keyCount);
+    let jsonArr = dataToJson(arr);
+    document.getElementById("EditboxJsonData").value = JSON.stringify(jsonArr);
 }
 
-function setToAndDownData() {
-    setExcelToJson();
-    downJsonData();
-}
+function btnStartToObject() {
+    let d = excelToData();
 
-function copyJsonData() {
-    let data = document.getElementById("EditboxJsonData").value;
-    copyText(data);
-}
+    let arr = dataToArr(d.datas, d.keyCount);
+    let jsonArr = dataToJson(arr);
 
-function downJsonData() {
-    let data = document.getElementById("EditboxJsonData").value;
-    downFlie("json" + (new Date().getTime()), data);
-}
-
-function setExcelToJson() {
-    let data = document.getElementById("EditboxExcelData").value;
-    if (data.length == 0) {
-        log("data");
-        return;
+    let keyName = document.getElementById("EditBoxKeyName").value;
+    if (keyName.length == 0) {
+        keyName = Object.keys(jsonArr[0])[0];
     }
-    let newData = getExcelToJson(data);
-    document.getElementById("EditboxJsonData").value = newData;
-}
+    console.log(keyName);
 
-function getExcelToJson(excelData) {
+    let isRemoveKey = document.getElementById("ChecBoxIsRemoveKey").checked;
 
-    let str = excelData;
-    log(str);
-
-    let f = ",{a" + Math.floor(Math.random() * 10000000) + "/*z},";
-    let d = "{d" + Math.floor(Math.random() * 10000000) + "e/r}";
-    log(f);
-
-    log("开始转换");
-    str = str.replace(/,/g, d);
-
-    str = str.replace(/\n/g, f);
-    str = str.replace(/\s+/g, ",");
-
-    let strs = str.split(",");
-
-    // 移除空字符串元素
-    for (let i = 0; i < strs.length; i++) {
-        if (strs[i].length == 0) {
-            strs.splice(i, 1);
+    let object = {};
+    for (let json of jsonArr) {
+        object[json[keyName]] = json;
+        if (isRemoveKey) {
+            delete object[json[keyName]][keyName];
         }
     }
 
-    log(strs);
+    console.log(object);
 
-    let index = -1;
-    let ft = f.replace(/,/g, "");
-    for (let i = 0; i < strs.length; i++) {
-        let t = strs[i];
-        if (t == ft) {
-            if (index == -1) {
-                index = i;
-            }
-            i = strs.length;
-        }
-    }
-    log("ft: " + index);
-
-    if (index == -1) {
-        alert("数据转换错误");
-        log("数据转换错误");
-        return undefined;
-    }
-
-    let keys = [];
-    for (let i = 0; i < index; i++) {
-        keys.push(strs[i]);
-    }
-    log(keys);
-
-    for (let i = 0; i < strs.length; i++) {
-        if (strs[i] == ft) {
-            strs.splice(i, 1);
-        }
-    }
-
-    log("strs: ", strs);
-
-    log("strsLeng:" + strs.length, "keysLeng:" + keys.length);
-    let line = Math.floor((strs.length / keys.length) - 1);
-    log("line: " + line);
-
-    let datas = [];
-    let count = keys.length;
-    for (let i = 0; i < line; i++) {
-        datas.push([]);
-        for (let j = count; j < keys.length + count; j++) {
-            let value = strs[j];
-            if (isNaN(Number(value))) {
-                value = value.replace(RegExp(d, "g"), ",");
-            }
-            datas[datas.length - 1].push(value);
-        }
-        count += keys.length;
-    }
-
-    log(datas);
-
-    let files = [];
-    for (let i = 0; i < datas.length; i++) {
-        files.push({});
-        for (let j = 0; j < keys.length; j++) {
-            let value = datas[i][j];
-            // 是否输出全字符串
-            if (document.getElementById("CheckboxToAllStr").checked) {
-                files[files.length - 1][keys[j]] = value;
-            } else {
-                if (isNaN(Number(value))) {
-                    files[files.length - 1][keys[j]] = value;
-                } else {
-                    files[files.length - 1][keys[j]] = Number(value);
-                }
-            }
-        }
-    }
-
-    log(files);
-
-    let fileData = JSON.stringify(files);
-    return fileData;
+    document.getElementById("EditboxJsonData").value = JSON.stringify(object);
 }
 
+// 复制数据
+function btnCopyData() {
+    copyText(document.getElementById("EditboxJsonData").value);
+}
+
+// 导出数据为文件
+function btnDownData() {
+    downFlie("json-" + (new Date().getTime()), document.getElementById("EditboxJsonData").value);
+}
+
+// excel数据处理
+function excelToData() {
+
+    let editboxExcelData = document.getElementById("EditboxExcelData");
+    // 获取excel数据
+    let excelData = editboxExcelData.value;
+    console.log(excelData);
+
+    // 键计数 默认1 遍历若是制表符+1 若是换行符结束遍历
+    let keyCount = 1;
+    for (let str of excelData) {
+        if (str == "\t") {
+            keyCount++;
+        }
+        if (str == "\n") {
+            break;
+        }
+    }
+    console.log(keyCount);
+
+    let newData = excelData.replace(/\t/g, ",");
+    newData = newData.replace(/\n/g, ",");
+    console.log(newData);
+
+    let datas = newData.split(",");
+    // 这里是因为在excel表格中全选数据复制会多复制一个制表符 所以做了判断是否多了并移除
+    if (datas[datas.length - 1].length == 0) {
+        datas.pop();
+    }
+    console.log(datas);
+
+    return { datas: datas, keyCount: keyCount };
+}
+
+function dataToArr(datas, keyCount) {
+    // 转成二位数组
+    let dataArr = [];
+
+    // 添加计数
+    let c = 0;
+    for (let data of datas) {
+        // 为0 添加新的数组
+        if (c == 0) {
+            dataArr.push([]);
+        }
+        // 向最后一个数组添加数据
+        dataArr[dataArr.length - 1].push(data);
+        c++;
+        // 计数为keyCount长度归零 重新计数
+        if (c == keyCount) {
+            c = 0;
+        }
+    }
+
+    console.log(dataArr);
+
+    return dataArr;
+}
+
+function dataToJson(arr) {
+
+    // 转成json数据
+    let dataJson = [];
+
+    // key名称列表
+    let keyNames = arr[0];
+    // key数量
+    let keyCount = keyNames.length;
+    console.log(keyNames);
+
+    // 0是key名称列表 所有从1开始遍历arr
+    for (let i = 1; i < arr.length; i++) {
+        let json = {};
+
+        // 新的数据对象
+        for (let j = 0; j < keyNames.length; j++) {
+            json[keyNames[j]] = arr[i][j];
+        }
+
+        dataJson.push(json);
+    }
+
+    console.log(dataJson);
+    return dataJson;
+}
+
+// 下载文件
 function downFlie(name, data) {
     // 创建a标签
-    var elementA = document.createElement('a');
+    var a = document.createElement('a');
 
     //文件的名称为时间戳加文件名后缀
-    elementA.download = name + ".json";
-    elementA.style.display = 'none';
+    a.download = name + ".json";
+    a.style.display = 'none';
 
     //生成一个blob二进制数据，内容为json数据
     var blob = new Blob([data]);
 
     //生成一个指向blob的URL地址，并赋值给a标签的href属性
-    elementA.href = URL.createObjectURL(blob);
-    document.body.appendChild(elementA);
-    elementA.click();
-    document.body.removeChild(elementA);
+    a.href = URL.createObjectURL(blob);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
+// 复制数据
 function copyText(text) {
     let tag = document.createElement('input');
     tag.setAttribute('id', 'cp_hgz_input');
@@ -164,10 +167,4 @@ function copyText(text) {
     document.getElementById('cp_hgz_input').select();
     document.execCommand('copy');
     document.getElementById('cp_hgz_input').remove();
-}
-
-function log(...message) {
-    if (isDebug) {
-        console.log(...message);
-    }
 }

@@ -12,20 +12,18 @@
     height: 300px;
 }
 
-#CheckboxToAllStr {
+#EditBoxKeyName {
+    font-size: 20px;
+    width: 100px;
+    height: 30px;
+}
+
+#ChecBoxIsRemoveKey {
     width: 30px;
     height: 30px;
 }
 
-#div1 {
-    
-}
-
-#div2 {
-   
-}
-
-.btn1{
+.btn1 {
     width: 100px;
     height: 30px;
 }

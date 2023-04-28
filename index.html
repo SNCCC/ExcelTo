@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel To Json</title>
+    <title>Excel To Json 2.0.0</title>
 
     <style>
         @import url("./css/index.css");
@@ -13,47 +13,59 @@
 
     <script src="./js/app.js"></script>
 
-    <script async="async" src="//i.6v6.work/v/?uid=389575"></script>
-
 </head>
 
 <body>
 
-    <h1>Excel To Json 1.0.0</h1>
-    <p1>作者: 刘宇祥 重制版 于2023/02/22开发</p1>
-
-    <h1></h1>
-    <!-- <a href="">github</a> -->
+    <h1>Excel To Json 2.0.0</h1>
+    <p1>作者: 刘宇祥 QQ: 2430877819</p1>
+    <p1>最近更新 2023/04/28</p1>
+    <a href="https://github.com/SNCCC/ExcelTo">github</a>
 
     <div id="div1">
         <textarea id="EditboxExcelData"></textarea>
         <textarea id="EditboxJsonData"></textarea>
     </div>
 
+    <p></p>
+
     <div id="div2">
-        <input id="CheckboxToAllStr" type="checkbox">
-        是否输出全字符串?
 
-        <button class="btn1" onclick="setExcelToJson()">
-            开始转换
-        </button>
+        <div>
+            <button class="btn1" onclick="btnStartToJson()">
+                转为数据
+            </button>
 
-        <button class="btn1" onclick="copyJsonData()">
-            复制数据
-        </button>
+            <button class="btn1" onclick="btnStartToArr()">
+                转为数组
+            </button>
 
-        <button class="btn1" onclick="downJsonData()">
-            导出文件
-        </button>
+            <button class="btn1" onclick="btnStartToObject()">
+                转为对象
+            </button>
 
-        <button class="btn1" onclick="setToAndCopyData()">
-            转换并复制
-        </button>
+            <button class="btn1" onclick="btnCopyData()">
+                复制数据
+            </button>
 
-        <button class="btn1" onclick="setToAndDownData()">
-            转换并导出
-        </button>
+            <button class="btn1" onclick="btnDownData()">
+                导出为文件
+            </button>
+        </div>
+
+        <div>
+            <h3>转为对象配置</h3>
+            对象key/不填的话默认为第一个
+        </div>
+
+        <div>
+            <input id="EditBoxKeyName" type="text">
+            <input id="ChecBoxIsRemoveKey" type="checkbox">
+            是否去除转换后对象数据中的key?
+        </div>
+
     </div>
+
 </body>
 
 </html>
